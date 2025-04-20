@@ -1,0 +1,47 @@
+import yfinance as yf
+import pandas as pd
+
+# List of index tickers
+index_tickers = [
+    "^FCHI",  # CAC 40
+    "^FTSEMIB",  # FTSE MIB
+    "^SX7E",  # Euro Stoxx Banks
+    "^SX5E",  # Euro Stoxx 50
+    "^GSPC",  # S&P 500
+    "^SD3E",  # STOXX Europe 600 Banks
+    "^UKX",  # FTSE 100
+    "^SSMI",  # Swiss Market Index (SMI)
+    "^HSCEI",  # Hang Seng China Enterprises Index
+    "^N225",  # Nikkei 225
+    "^RUT",  # Russell 2000
+    "^MXEA",  # MSCI Europe Asia Index
+    "^MXWO",  # MSCI World Index
+    "^MXEF",  # MSCI Emerging Markets Index
+    "^DJI",  # Dow Jones Industrial Average
+    "^DAX",  # DAX
+   # "^STOXX50E"  # Euro Stoxx 50 (alternate ticker)
+]
+
+# Download daily index data
+def get_index_data(tickers, start_date="2000-01-01", end_date="2025-01-01"):
+    all_data = pd.DataFrame()
+
+    for ticker in tickers:
+        print(f"Downloading data for {ticker}...")
+        # Download data from Yahoo Finance
+        data = yf.download(ticker, start=start_date, end=end_date)
+        # Add the ticker as a column to identify the index
+        data['Index'] = ticker
+        # Append the data to the main DataFrame
+        all_data = pd.concat([all_data, data])
+
+    return all_data
+
+# Get the data
+index_data = get_index_data(index_tickers)
+
+# Save the data to a CSV file at the specified location
+output_path = "/Users/marinemalerba/Documents/MASTER DAUPHINE - 203 FINANCIAL MARKETS/Master Thesis/Data/index_spot_prices.csv"
+index_data.to_csv(output_path)
+
+print(f"Data has been downloaded and saved to '{output_path}'.")
