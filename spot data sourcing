@@ -4,44 +4,33 @@ import pandas as pd
 # List of index tickers
 index_tickers = [
     "^FCHI",  # CAC 40
-    "^FTSEMIB",  # FTSE MIB
-    "^SX7E",  # Euro Stoxx Banks
-    "^SX5E",  # Euro Stoxx 50
+    "FTSEMIB.MI",  # FTSE MIB
     "^GSPC",  # S&P 500
-    "^SD3E",  # STOXX Europe 600 Banks
-    "^UKX",  # FTSE 100
+    "^FTSE",  # FTSE 100
     "^SSMI",  # Swiss Market Index (SMI)
-    "^HSCEI",  # Hang Seng China Enterprises Index
+    "^HSCE",  # Hang Seng China Enterprises Index
     "^N225",  # Nikkei 225
     "^RUT",  # Russell 2000
-    "^MXEA",  # MSCI Europe Asia Index
-    "^MXWO",  # MSCI World Index
-    "^MXEF",  # MSCI Emerging Markets Index
+    "IWDA.L",  # MSCI World Index
+    "EEM",  # MSCI Emerging Markets Index
     "^DJI",  # Dow Jones Industrial Average
-    "^DAX",  # DAX
-   # "^STOXX50E"  # Euro Stoxx 50 (alternate ticker)
+    "^GDAXI",  # DAX
 ]
 
-# Download daily index data
-def get_index_data(tickers, start_date="2000-01-01", end_date="2025-01-01"):
-    all_data = pd.DataFrame()
+# Download data for multiple tickers from 01-01-2010 onwards
+data = yf.download(index_tickers, start="2010-01-01", group_by='ticker')
 
-    for ticker in tickers:
-        print(f"Downloading data for {ticker}...")
-        # Download data from Yahoo Finance
-        data = yf.download(ticker, start=start_date, end=end_date)
-        # Add the ticker as a column to identify the index
-        data['Index'] = ticker
-        # Append the data to the main DataFrame
-        all_data = pd.concat([all_data, data])
+all_data = []
+# Loop through each ticker and clean its data
+for ticker in index_tickers:
+    df = data[ticker].reset_index()
+    df['Ticker'] = ticker
+    all_data.append(df)
 
-    return all_data
+# Concatenate all DataFrames into one large DataFrame
+final_data = pd.concat(all_data, ignore_index=True)
 
-# Get the data
-index_data = get_index_data(index_tickers)
+# Save the combined data into a CSV file
+final_data.to_csv("combined_spot_index_data.csv", index=False)
 
-# Save the data to a CSV file at the specified location
-output_path = "/Users/marinemalerba/Documents/MASTER DAUPHINE - 203 FINANCIAL MARKETS/Master Thesis/Data/index_spot_prices.csv"
-index_data.to_csv(output_path)
-
-print(f"Data has been downloaded and saved to '{output_path}'.")
+print("Download and saving to CSV complete.")
