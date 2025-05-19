@@ -178,7 +178,5 @@ for idx, row in index_compo.iterrows():
 feature_df = pd.DataFrame(feature_rows)
 feature_df.to_excel("FEATURES_CAC40_features_dataset.xlsx", index=False)
 
-print("Feature generation complete.")
-
 
 
